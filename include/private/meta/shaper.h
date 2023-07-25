@@ -33,17 +33,29 @@ namespace lsp
     {
         typedef struct shaper
         {
-            static constexpr float  SAMPLES_MIN         = 0.0f;
-            static constexpr float  SAMPLES_MAX         = 10000.0f;
-            static constexpr float  SAMPLES_DFL         = 0.0f;
-            static constexpr float  SAMPLES_STEP        = 1.0f;
+            static constexpr size_t GRAPH_DOTS          = 256;
+            static constexpr size_t ORDER_MAX           = 12;
+            static constexpr size_t OVERSAMPLING_MAX    = 8;
 
-            static constexpr float  TIME_MIN            = 0.0f;
-            static constexpr float  TIME_MAX            = 1000.0f;
-            static constexpr float  TIME_DFL            = 0.0f;
-            static constexpr float  TIME_STEP           = 0.01f;
+            static constexpr float  GRAPH_DB_MIN        = -72.0f;
+            static constexpr float  GRAPH_DB_MAX        = 0.0f;
+            static constexpr float  GRAPH_LIN_MIN       = 0.0f;
+            static constexpr float  GRAPH_LIN_MAX       = 1.0f;
 
-            static constexpr float  DELAY_OUT_MAX_TIME  = 10000.0f;
+            static constexpr float  SHIFT_MIN           = 0.1f;
+            static constexpr float  SHIFT_MAX           = 0.9f;
+            static constexpr float  SHIFT_DFL           = 0.5f;
+            static constexpr float  SHIFT_STEP          = 0.01f;
+
+            static constexpr float  SCALE_MIN           = 0.25f;
+            static constexpr float  SCALE_MAX           = 1.75f;
+            static constexpr float  SCALE_DFL           = 1.0f;
+            static constexpr float  SCALE_STEP          = 0.01f;
+
+            static constexpr float  APPROX_MIN          = 4.0f;
+            static constexpr float  APPROX_MAX          = ORDER_MAX;
+            static constexpr float  APPROX_DFL          = 8.0f;
+            static constexpr float  APPROX_STEP         = 1.0f;
         } shaper;
 
         // Plugin type metadata

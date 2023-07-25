@@ -38,6 +38,22 @@ namespace lsp
 {
     namespace meta
     {
+        static const port_item_t oversampling_mode[] =
+        {
+            { "None",                   "flanger.oversampler.none"          },
+            { "2X Medium",              "flanger.oversampler.2x_medium"     },
+            { "2X High",                "flanger.oversampler.2x_high"       },
+            { "3X Medium",              "flanger.oversampler.3x_medium"     },
+            { "3X High",                "flanger.oversampler.3x_high"       },
+            { "4X Medium",              "flanger.oversampler.4x_medium"     },
+            { "4X High",                "flanger.oversampler.4x_high"       },
+            { "6X Medium",              "flanger.oversampler.6x_medium"     },
+            { "6X High",                "flanger.oversampler.6x_high"       },
+            { "8X Medium",              "flanger.oversampler.8x_medium"     },
+            { "8X High",                "flanger.oversampler.8x_high"       },
+            { NULL,                     NULL}
+        };
+
         //-------------------------------------------------------------------------
         // Plugin metadata
 
@@ -49,15 +65,24 @@ namespace lsp
 
             // Input controls
             BYPASS,
-            INT_CONTROL("d_in", "Delay in samples", U_SAMPLES, shaper::SAMPLES),
+            IN_GAIN,
             DRY_GAIN(0.0f),
             WET_GAIN(1.0f),
             OUT_GAIN,
 
-            // Output controls
-            METER_MINMAX("d_out", "Delay time in milliseconds", U_MSEC, 0.0f, shaper::DELAY_OUT_MAX_TIME),
-            METER_GAIN("min", "Input gain", GAIN_AMP_P_48_DB),
-            METER_GAIN("mout", "Output gain", GAIN_AMP_P_48_DB),
+            // Shaping controls
+            CONTROL("hshift", "Horizontal shift", U_NONE, shaper::SHIFT),
+            CONTROL("vshift", "Vertical shift", U_NONE, shaper::SHIFT),
+            CONTROL("tscale", "Top scale", U_NONE, shaper::SCALE),
+            CONTROL("bscale", "Bottom scale", U_NONE, shaper::SCALE),
+            COMBO("ovs", "Oversampling", 0, oversampling_mode),
+            SWITCH("listen", "Listen effect", 0.0f),
+            MESH("gr_lin", "Linear graph", 2, shaper::GRAP_DOTS),
+            MESH("gr_log", "Logarithmic graph", 2, shaper::GRAP_DOTS),
+
+            // Meters
+            METER_GAIN("g_in", "Input gain", GAIN_AMP_P_48_DB),
+            METER_GAIN("g_out", "Output gain", GAIN_AMP_P_48_DB),
 
             PORTS_END
         };
@@ -70,29 +95,46 @@ namespace lsp
 
             // Input controls
             BYPASS,
-            INT_CONTROL("d_in", "Delay in samples", U_SAMPLES, shaper::SAMPLES),
+            IN_GAIN,
             DRY_GAIN(0.0f),
             WET_GAIN(1.0f),
             OUT_GAIN,
 
             // Output controls
-            METER_MINMAX("d_out", "Delay time in milliseconds", U_MSEC, 0.0f, shaper::DELAY_OUT_MAX_TIME),
-            METER_GAIN("min_l", "Input gain left",  GAIN_AMP_P_48_DB),
-            METER_GAIN("mout_l", "Output gain left",  GAIN_AMP_P_48_DB),
-            METER_GAIN("min_r", "Input gain right",  GAIN_AMP_P_48_DB),
-            METER_GAIN("mout_r", "Output gain right", GAIN_AMP_P_48_DB),
+            CONTROL("hshift", "Horizontal shift", U_NONE, shaper::SHIFT),
+            CONTROL("vshift", "Vertical shift", U_NONE, shaper::SHIFT),
+            CONTROL("tscale", "Top scale", U_NONE, shaper::SCALE),
+            CONTROL("bscale", "Bottom scale", U_NONE, shaper::SCALE),
+            COMBO("ovs", "Oversampling", 0, oversampling_mode),
+            SWITCH("listen", "Listen effect", 0.0f),
+
+            // Shaping controls
+            CONTROL("hshift", "Horizontal shift", U_NONE, shaper::SHIFT),
+            CONTROL("vshift", "Vertical shift", U_NONE, shaper::SHIFT),
+            CONTROL("tscale", "Top scale", U_NONE, shaper::SCALE),
+            CONTROL("bscale", "Bottom scale", U_NONE, shaper::SCALE),
+            COMBO("ovs", "Oversampling", 0, oversampling_mode),
+            SWITCH("listen", "Listen effect", 0.0f),
+            MESH("gr_lin", "Linear graph", 2, shaper::GRAPH_DOTS),
+            MESH("gr_log", "Logarithmic graph", 2, shaper::GRAPH_DOTS),
+
+            // Meters
+            METER_GAIN("g_in_l", "Input gain Left", GAIN_AMP_P_48_DB),
+            METER_GAIN("g_out_l", "Output gain Left", GAIN_AMP_P_48_DB),
+            METER_GAIN("g_in_r", "Input gain Right", GAIN_AMP_P_48_DB),
+            METER_GAIN("g_out_r", "Output gain Right", GAIN_AMP_P_48_DB),
 
             PORTS_END
         };
 
-        static const int plugin_classes[]       = { C_DELAY, -1 };
-        static const int clap_features_mono[]   = { CF_AUDIO_EFFECT, CF_UTILITY, CF_MONO, -1 };
-        static const int clap_features_stereo[] = { CF_AUDIO_EFFECT, CF_UTILITY, CF_STEREO, -1 };
+        static const int plugin_classes[]       = { C_WAVESHAPER, -1 };
+        static const int clap_features_mono[]   = { CF_AUDIO_EFFECT, CF_DISTORTION, CF_MONO, -1 };
+        static const int clap_features_stereo[] = { CF_AUDIO_EFFECT, CF_DISTORTION, CF_STEREO, -1 };
 
         const meta::bundle_t shaper_bundle =
         {
             "shaper",
-            "Plugin Template",
+            "Shaper plugin",
             B_UTILITIES,
             "", // TODO: provide ID of the video on YouTube
             "" // TODO: write plugin description, should be the same to the english version in 'bundles.json'
@@ -100,23 +142,23 @@ namespace lsp
 
         const plugin_t shaper_mono =
         {
-            "Pluginschablone Mono",
-            "Plugin Template Mono",
-            "PS1M",
+            "Shaper Mono",
+            "Shaper Mono",
+            "SH1M",
             &developers::v_sadovnikov,
             "shaper_mono",
             LSP_LV2_URI("shaper_mono"),
             LSP_LV2UI_URI("shaper_mono"),
-            "xxxx",         // TODO: fill valid VST2 ID (4 letters/digits)
+            "shpm",
             1,              // TODO: fill valid LADSPA identifier (positive decimal integer)
             LSP_LADSPA_URI("shaper_mono"),
             LSP_CLAP_URI("shaper_mono"),
             LSP_PLUGINS_SHAPER_VERSION,
             plugin_classes,
             clap_features_mono,
-            E_DUMP_STATE,
+            E_DUMP_STATE | E_INLINE_DISPLAY,
             shaper_mono_ports,
-            "template/plugin.xml",
+            "effects/shaper.xml",
             NULL,
             mono_plugin_port_groups,
             &shaper_bundle
@@ -124,23 +166,23 @@ namespace lsp
 
         const plugin_t shaper_stereo =
         {
-            "Pluginschablone Stereo",
-            "Plugin Template Stereo",
-            "PS1S",
+            "Shaper Stereo",
+            "Shaper Stereo",
+            "SH1S",
             &developers::v_sadovnikov,
             "shaper_stereo",
             LSP_LV2_URI("shaper_stereo"),
             LSP_LV2UI_URI("shaper_stereo"),
-            "yyyy",         // TODO: fill valid VST2 ID (4 letters/digits)
+            "shps",
             2,              // TODO: fill valid LADSPA identifier (positive decimal integer)
             LSP_LADSPA_URI("shaper_stereo"),
             LSP_CLAP_URI("shaper_stereo"),
             LSP_PLUGINS_SHAPER_VERSION,
             plugin_classes,
             clap_features_stereo,
-            E_DUMP_STATE,
+            E_DUMP_STATE | E_INLINE_DISPLAY,
             shaper_stereo_ports,
-            "template/plugin.xml",
+            "effects/shaper.xml",
             NULL,
             stereo_plugin_port_groups,
             &shaper_bundle

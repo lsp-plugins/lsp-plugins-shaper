@@ -22,8 +22,9 @@
 #ifndef PRIVATE_PLUGINS_SHAPER_H_
 #define PRIVATE_PLUGINS_SHAPER_H_
 
-#include <lsp-plug.in/dsp-units/util/Delay.h>
 #include <lsp-plug.in/dsp-units/ctl/Bypass.h>
+#include <lsp-plug.in/dsp-units/util/Delay.h>
+#include <lsp-plug.in/dsp-units/util/Oversampler.h>
 #include <lsp-plug.in/plug-fw/plug.h>
 #include <private/meta/shaper.h>
 
@@ -41,44 +42,74 @@ namespace lsp
                 shaper (const shaper &);
 
             protected:
-                enum mode_t
-                {
-                    CD_MONO,
-                    CD_STEREO,
-                    CD_X2_STEREO
-                };
-
                 typedef struct channel_t
                 {
-                    // DSP processing modules
-                    dspu::Delay         sLine;              // Delay line
                     dspu::Bypass        sBypass;            // Bypass
+                    dspu::Oversampler   sOver;              // Oversampler
+                    dspu::Delay         sDryDelay;          // Dry delay
 
-                    // Parameters
-                    ssize_t             nDelay;             // Actual delay of the signal
-                    float               fDryGain;           // Dry gain (unprocessed signal)
-                    float               fWetGain;           // Wet gain (processed signal)
+                    float              *vIn;                // Input data
+                    float              *vOut;               // Output data
 
-                    // Input ports
                     plug::IPort        *pIn;                // Input port
                     plug::IPort        *pOut;               // Output port
-                    plug::IPort        *pDelay;             // Delay (in samples)
-                    plug::IPort        *pDry;               // Dry control
-                    plug::IPort        *pWet;               // Wet control
-
-                    // Output ports
-                    plug::IPort        *pOutDelay;          // Output delay time
-                    plug::IPort        *pInLevel;           // Input signal level
-                    plug::IPort        *pOutLevel;          // Output signal level
+                    plug::IPort        *pMeterIn;           // Input meter
+                    plug::IPort        *pMeterOut;          // Output meter
                 } channel_t;
+
+                enum mesh_sync_t
+                {
+                    SYNC_LIN            = 1 << 0,
+                    SYNC_LOG            = 1 << 1
+                };
+
+            protected:
+                static dspu::over_mode_t        all_oversampling_modes[];
 
             protected:
                 size_t              nChannels;          // Number of channels
-                channel_t          *vChannels;          // Delay channels
-                float              *vBuffer;            // Temporary buffer for audio processing
+                channel_t          *vChannels;          // Audio channels
+                size_t              nOldOrder;          // Old approximation order
+                size_t              nOrder;             // Actual approximation order
+                bool                bCrossfade;         // Crossfade mode
+                size_t              nSync;              // Mesh sync
+                double             *vMatrix;            // Matrix buffer
+                float              *vOldRoots;          // Old equation roots
+                float              *vRoots;             // Actual Equation roots
+                float              *vBuffer;            // Temporary buffer
+                float              *vOvsBuffer;         // Temporary buffer oversampled
+                float              *vLinCoord;          // Linear graph coordinates
+                float              *vLinGraph;          // Linear graph coordinates
+                float              *vLogCoord;          // Logarithmic graph coordinates
+                float              *vLogGraph;          // Logarithmic graph coordinates
+
+                float               fHShift;            // Horizontal shift value
+                float               fVShift;            // Vertical shift value
+                float               fTopScale;          // Top scale
+                float               fBottomScale;       // Bottom scale
+                float               fOldTangent;        // Old tangent value
+                float               fTangent;           // Actual tangent value
+                float               fOldInGain;         // Old input gain
+                float               fInGain;            // Actual input gain
+                float               fOldDryGain;        // Old dry gain
+                float               fDryGain;           // Actual dry gain
+                float               fOldWetGain;        // Old wet gain
+                float               fWetGain;           // Actual wet gain
 
                 plug::IPort        *pBypass;            // Bypass
+                plug::IPort        *pGainIn;            // Input gain
+                plug::IPort        *pDry;               // Dry gain
+                plug::IPort        *pWet;               // Wet gain
                 plug::IPort        *pGainOut;           // Output gain
+
+                plug::IPort        *pHShift;            // Horizontal shift
+                plug::IPort        *pVShift;            // Vertical shift
+                plug::IPort        *pTopScale;          // Top scale
+                plug::IPort        *pBottomScale;       // Bottom scale
+                plug::IPort        *pOversampling;      // Oversampling
+                plug::IPort        *pListen;            // Listen
+                plug::IPort        *pLinMesh;           // Linear mesh output
+                plug::IPort        *pLogMesh;           // Logarithmic mesh output
 
                 uint8_t            *pData;              // Allocated data
 
@@ -93,6 +124,8 @@ namespace lsp
                 virtual void        update_sample_rate(long sr) override;
                 virtual void        update_settings() override;
                 virtual void        process(size_t samples) override;
+                virtual void        ui_activated() override;
+                virtual bool        inline_display(plug::ICanvas *cv, size_t width, size_t height) override;
                 virtual void        dump(dspu::IStateDumper *v) const override;
         };
 
