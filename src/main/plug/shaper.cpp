@@ -91,6 +91,7 @@ namespace lsp
             nOldOrder       = 0;
             nOrder          = 0;
             bCrossfade      = false;
+            nSync           = SYNC_ALL;
             vMatrix         = NULL;
             vOldRoots       = NULL;
             vRoots          = NULL;
@@ -146,7 +147,7 @@ namespace lsp
             size_t szof_channels    = align_size(sizeof(channel_t) * nChannels, OPTIMAL_ALIGN);
             size_t buf_sz           = BUFFER_SIZE * sizeof(float);
             size_t ovs_buf_sz       = buf_sz * meta::shaper::OVERSAMPLING_MAX;
-            size_t matrix_sz        = align_size(sizeof(float) * meta::shaper::ORDER_MAX * (meta::shaper::ORDER_MAX + 1), OPTIMAL_ALIGN);
+            size_t matrix_sz        = align_size(sizeof(double) * meta::shaper::ORDER_MAX * (meta::shaper::ORDER_MAX + 1), OPTIMAL_ALIGN);
             size_t roots_sz         = align_size(sizeof(float) * meta::shaper::ORDER_MAX, OPTIMAL_ALIGN);
             size_t coord_sz         = align_size(sizeof(float) * meta::shaper::GRAPH_DOTS, OPTIMAL_ALIGN);
             size_t alloc            =
@@ -165,7 +166,7 @@ namespace lsp
             // Initialize pointers to channels and temporary buffer
             vChannels               = reinterpret_cast<channel_t *>(ptr);
             ptr                    += szof_channels;
-            vMatrix                 = reinterpret_cast<float *>(matrix_sz);
+            vMatrix                 = reinterpret_cast<double *>(matrix_sz);
             ptr                    += matrix_sz;
             vOldRoots               = reinterpret_cast<float *>(roots_sz);
             ptr                    += roots_sz;
@@ -354,16 +355,10 @@ namespace lsp
 
                 // TODO: compute the matrix
 
-                // Recompute mesh graph
+                // TODO: Recompute mesh graph
 
                 // Mark meshes for sync
-                nSync                   = SYNC_LIN | SYNC_LOG;
-            }
-
-            // Need to update graph values?
-            if (nSync)
-            {
-                // Query inline display for redraw
+                nSync                   = SYNC_ALL;
                 pWrapper->query_display_draw();
             }
         }
@@ -385,8 +380,25 @@ namespace lsp
             sync_meshes();
         }
 
+        void shaper::sync_meshes()
+        {
+            // TODO
+        }
+
+        void shaper::ui_activated()
+        {
+            nSync          = SYNC_LIN | SYNC_LOG;
+        }
+
+        bool shaper::inline_display(plug::ICanvas *cv, size_t width, size_t height)
+        {
+            // TODO
+            return false;
+        }
+
         void shaper::dump(dspu::IStateDumper *v) const
         {
+            // TODO
         }
 
     } /* namespace plugins */

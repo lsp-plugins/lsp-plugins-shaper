@@ -77,8 +77,8 @@ namespace lsp
             CONTROL("bscale", "Bottom scale", U_NONE, shaper::SCALE),
             COMBO("ovs", "Oversampling", 0, oversampling_mode),
             SWITCH("listen", "Listen effect", 0.0f),
-            MESH("gr_lin", "Linear graph", 2, shaper::GRAP_DOTS),
-            MESH("gr_log", "Logarithmic graph", 2, shaper::GRAP_DOTS),
+            MESH("gr_lin", "Linear graph", 2, shaper::GRAPH_DOTS),
+            MESH("gr_log", "Logarithmic graph", 2, shaper::GRAPH_DOTS),
 
             // Meters
             METER_GAIN("g_in", "Input gain", GAIN_AMP_P_48_DB),

@@ -60,7 +60,9 @@ namespace lsp
                 enum mesh_sync_t
                 {
                     SYNC_LIN            = 1 << 0,
-                    SYNC_LOG            = 1 << 1
+                    SYNC_LOG            = 1 << 1,
+
+                    SYNC_ALL            = SYNC_LIN | SYNC_LOG
                 };
 
             protected:
@@ -112,6 +114,9 @@ namespace lsp
                 plug::IPort        *pLogMesh;           // Logarithmic mesh output
 
                 uint8_t            *pData;              // Allocated data
+
+            protected:
+                void                sync_meshes();
 
             public:
                 explicit shaper(const meta::plugin_t *meta);
