@@ -40,17 +40,31 @@ namespace lsp
     {
         static const port_item_t oversampling_mode[] =
         {
-            { "None",                   "flanger.oversampler.none"          },
-            { "2X Medium",              "flanger.oversampler.2x_medium"     },
-            { "2X High",                "flanger.oversampler.2x_high"       },
-            { "3X Medium",              "flanger.oversampler.3x_medium"     },
-            { "3X High",                "flanger.oversampler.3x_high"       },
-            { "4X Medium",              "flanger.oversampler.4x_medium"     },
-            { "4X High",                "flanger.oversampler.4x_high"       },
-            { "6X Medium",              "flanger.oversampler.6x_medium"     },
-            { "6X High",                "flanger.oversampler.6x_high"       },
-            { "8X Medium",              "flanger.oversampler.8x_medium"     },
-            { "8X High",                "flanger.oversampler.8x_high"       },
+            { "None",                   "oversampler.none"                  },
+            { "2x/16bit",               "oversampler.normal.2x16bit"        },
+            { "2x/24bit",               "oversampler.normal.2x24bit"        },
+            { "3x/16bit",               "oversampler.normal.3x16bit"        },
+            { "3x/24bit",               "oversampler.normal.3x24bit"        },
+            { "4x/16bit",               "oversampler.normal.4x16bit"        },
+            { "4x/24bit",               "oversampler.normal.4x24bit"        },
+            { "6x/16bit",               "oversampler.normal.6x16bit"        },
+            { "6x/24bit",               "oversampler.normal.6x24bit"        },
+            { "8x/16bit",               "oversampler.normal.8x16bit"        },
+            { "8x/24bit",               "oversampler.normal.8x24bit"        },
+            { NULL,                     NULL}
+        };
+
+        static const port_item_t approximation_orders[] =
+        {
+            { "4th order",              "shaper.approximation.4th_order"    },
+            { "5th order",              "shaper.approximation.5th_order"    },
+            { "6th order",              "shaper.approximation.6th_order"    },
+            { "7th order",              "shaper.approximation.7th_order"    },
+            { "8th order",              "shaper.approximation.8th_order"    },
+            { "9th order",              "shaper.approximation.9th_order"    },
+            { "10th order",             "shaper.approximation.10th_order"   },
+            { "11th order",             "shaper.approximation.11th_order"   },
+            { "12th order",             "shaper.approximation.12th_order"   },
             { NULL,                     NULL}
         };
 
@@ -75,14 +89,16 @@ namespace lsp
             CONTROL("vshift", "Vertical shift", U_NONE, shaper::SHIFT),
             CONTROL("tscale", "Top scale", U_NONE, shaper::SCALE),
             CONTROL("bscale", "Bottom scale", U_NONE, shaper::SCALE),
+            COMBO("order", "Approximation order", shaper::ORDER_DFL, approximation_orders),
             COMBO("ovs", "Oversampling", 0, oversampling_mode),
             SWITCH("listen", "Listen effect", 0.0f),
             MESH("gr_lin", "Linear graph", 2, shaper::GRAPH_DOTS),
             MESH("gr_log", "Logarithmic graph", 2, shaper::GRAPH_DOTS),
 
             // Meters
-            METER_GAIN("g_in", "Input gain", GAIN_AMP_P_48_DB),
-            METER_GAIN("g_out", "Output gain", GAIN_AMP_P_48_DB),
+            METER_GAIN("min", "Input gain", GAIN_AMP_P_48_DB),
+            METER_GAIN("mout", "Output gain", GAIN_AMP_P_48_DB),
+            METER_GAIN_DFL("rms", "RMS difference meter", GAIN_AMP_P_24_DB, GAIN_AMP_0_DB),
 
             PORTS_END
         };
@@ -100,29 +116,24 @@ namespace lsp
             WET_GAIN(1.0f),
             OUT_GAIN,
 
-            // Output controls
-            CONTROL("hshift", "Horizontal shift", U_NONE, shaper::SHIFT),
-            CONTROL("vshift", "Vertical shift", U_NONE, shaper::SHIFT),
-            CONTROL("tscale", "Top scale", U_NONE, shaper::SCALE),
-            CONTROL("bscale", "Bottom scale", U_NONE, shaper::SCALE),
-            COMBO("ovs", "Oversampling", 0, oversampling_mode),
-            SWITCH("listen", "Listen effect", 0.0f),
-
             // Shaping controls
             CONTROL("hshift", "Horizontal shift", U_NONE, shaper::SHIFT),
             CONTROL("vshift", "Vertical shift", U_NONE, shaper::SHIFT),
             CONTROL("tscale", "Top scale", U_NONE, shaper::SCALE),
             CONTROL("bscale", "Bottom scale", U_NONE, shaper::SCALE),
+            COMBO("order", "Approximation order", shaper::ORDER_DFL, approximation_orders),
             COMBO("ovs", "Oversampling", 0, oversampling_mode),
             SWITCH("listen", "Listen effect", 0.0f),
             MESH("gr_lin", "Linear graph", 2, shaper::GRAPH_DOTS),
             MESH("gr_log", "Logarithmic graph", 2, shaper::GRAPH_DOTS),
 
             // Meters
-            METER_GAIN("g_in_l", "Input gain Left", GAIN_AMP_P_48_DB),
-            METER_GAIN("g_out_l", "Output gain Left", GAIN_AMP_P_48_DB),
-            METER_GAIN("g_in_r", "Input gain Right", GAIN_AMP_P_48_DB),
-            METER_GAIN("g_out_r", "Output gain Right", GAIN_AMP_P_48_DB),
+            METER_GAIN("min_l", "Input gain Left", GAIN_AMP_P_48_DB),
+            METER_GAIN("mout_l", "Output gain Left", GAIN_AMP_P_48_DB),
+            METER_GAIN_DFL("rms_l", "RMS difference meter Left", GAIN_AMP_P_24_DB, GAIN_AMP_0_DB),
+            METER_GAIN("min_r", "Input gain Right", GAIN_AMP_P_48_DB),
+            METER_GAIN("mout_r", "Output gain Right", GAIN_AMP_P_48_DB),
+            METER_GAIN_DFL("rms_r", "RMS difference meter Right", GAIN_AMP_P_24_DB, GAIN_AMP_0_DB),
 
             PORTS_END
         };

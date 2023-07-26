@@ -34,8 +34,12 @@ namespace lsp
         typedef struct shaper
         {
             static constexpr size_t GRAPH_DOTS          = 256;
+            static constexpr size_t ORDER_MIN           = 4;
             static constexpr size_t ORDER_MAX           = 12;
+            static constexpr size_t ORDER_DFL           = 8 - ORDER_MIN;
             static constexpr size_t OVERSAMPLING_MAX    = 8;
+
+            static constexpr float  RMS_REACTIVITY      = 40.0f;
 
             static constexpr float  GRAPH_DB_MIN        = -72.0f;
             static constexpr float  GRAPH_DB_MAX        = 0.0f;
@@ -45,17 +49,12 @@ namespace lsp
             static constexpr float  SHIFT_MIN           = 0.1f;
             static constexpr float  SHIFT_MAX           = 0.9f;
             static constexpr float  SHIFT_DFL           = 0.5f;
-            static constexpr float  SHIFT_STEP          = 0.01f;
+            static constexpr float  SHIFT_STEP          = 0.0005f;
 
             static constexpr float  SCALE_MIN           = 0.25f;
             static constexpr float  SCALE_MAX           = 1.75f;
             static constexpr float  SCALE_DFL           = 1.0f;
-            static constexpr float  SCALE_STEP          = 0.01f;
-
-            static constexpr float  APPROX_MIN          = 4.0f;
-            static constexpr float  APPROX_MAX          = ORDER_MAX;
-            static constexpr float  APPROX_DFL          = 8.0f;
-            static constexpr float  APPROX_STEP         = 1.0f;
+            static constexpr float  SCALE_STEP          = 0.0005f;
         } shaper;
 
         // Plugin type metadata

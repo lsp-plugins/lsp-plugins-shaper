@@ -25,6 +25,7 @@
 #include <lsp-plug.in/dsp-units/ctl/Bypass.h>
 #include <lsp-plug.in/dsp-units/util/Delay.h>
 #include <lsp-plug.in/dsp-units/util/Oversampler.h>
+#include <lsp-plug.in/dsp-units/util/Sidechain.h>
 #include <lsp-plug.in/plug-fw/plug.h>
 #include <private/meta/shaper.h>
 
@@ -47,6 +48,7 @@ namespace lsp
                     dspu::Bypass        sBypass;            // Bypass
                     dspu::Oversampler   sOver;              // Oversampler
                     dspu::Delay         sDryDelay;          // Dry delay
+                    dspu::Sidechain     sRMSMeter;          // RMS meter sidechain
 
                     float              *vIn;                // Input data
                     float              *vOut;               // Output data
@@ -55,6 +57,7 @@ namespace lsp
                     plug::IPort        *pOut;               // Output port
                     plug::IPort        *pMeterIn;           // Input meter
                     plug::IPort        *pMeterOut;          // Output meter
+                    plug::IPort        *pRmsOut;            // RMS difference
                 } channel_t;
 
                 enum mesh_sync_t
@@ -74,10 +77,12 @@ namespace lsp
                 size_t              nOldOrder;          // Old approximation order
                 size_t              nOrder;             // Actual approximation order
                 bool                bCrossfade;         // Crossfade mode
+                bool                bListen;            // Listen the effect
                 size_t              nSync;              // Mesh sync
                 double             *vMatrix;            // Matrix buffer
                 float              *vOldRoots;          // Old equation roots
                 float              *vRoots;             // Actual Equation roots
+                float              *vInBuffer;          // Temporary input buffer
                 float              *vBuffer;            // Temporary buffer
                 float              *vOvsBuffer;         // Temporary buffer oversampled
                 float              *vLinCoord;          // Linear graph coordinates
@@ -97,6 +102,8 @@ namespace lsp
                 float               fDryGain;           // Actual dry gain
                 float               fOldWetGain;        // Old wet gain
                 float               fWetGain;           // Actual wet gain
+                float               fOldOutGain;        // Old output gain
+                float               fOutGain;           // Actual output gain
 
                 plug::IPort        *pBypass;            // Bypass
                 plug::IPort        *pGainIn;            // Input gain
@@ -108,6 +115,7 @@ namespace lsp
                 plug::IPort        *pVShift;            // Vertical shift
                 plug::IPort        *pTopScale;          // Top scale
                 plug::IPort        *pBottomScale;       // Bottom scale
+                plug::IPort        *pOrder;             // Approximation order
                 plug::IPort        *pOversampling;      // Oversampling
                 plug::IPort        *pListen;            // Listen
                 plug::IPort        *pLinMesh;           // Linear mesh output
