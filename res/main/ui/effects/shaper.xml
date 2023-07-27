@@ -10,39 +10,57 @@
 		
 		<!-- row 2 -->
 		<group text="shaper">
-			<grid rows="3" cols="4">
+			<grid rows="3" cols="5">
 				<label text="H Shift" />
 				<label text="V Shift" />
 				<label text="Low Scale" />
 				<label text="High Scale" />
+				<label text="Bias" />
 
 				<knob id="hshift" pad.h="6" pad.v="4"/>
 				<knob id="vshift" pad.h="6" pad.v="4"/>
 				<knob id="bscale" pad.h="6" pad.v="4"/>
-				<knob id="tscale" scolor="wet" pad.h="6" pad.v="4"/>
+				<knob id="tscale" pad.h="6" pad.v="4"/>
+				<knob id="bias" pad.h="6" pad.v="4"/>
 
 				<value id="hshift" width.min="56" sline="true"/>
 				<value id="vshift" width.min="56" sline="true"/>
 				<value id="bscale" width.min="56" sline="true"/>
 				<value id="tscale" width.min="56" sline="true"/>
+				<value id="bias" width.min="56" sline="true"/>
 			</grid>
 		</group>
 		<cell rows="3">
 			<ledmeter vexpand="true" angle="1" bg.inherit="true">
-				<ledchannel id="min_l" min="-72 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
-				<ledchannel id="min_r" min="-72 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
+				<ui:if test="ex :min_l">
+					<ledchannel id="min_l" min="-72 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
+					<ledchannel id="min_r" min="-72 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
+				</ui:if>
+				<ui:if test="ex :min">
+					<ledchannel id="min" min="-72 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="middle_in"/>
+				</ui:if>
 			</ledmeter>
 		</cell>
 		<cell rows="3">
 			<ledmeter vexpand="true" angle="1" bg.inherit="true">
-				<ledchannel id="mout_l" min="-72 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
-				<ledchannel id="mout_r" min="-72 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
+				<ui:if test="ex :mout_l">
+					<ledchannel id="mout_l" min="-72 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
+					<ledchannel id="mout_r" min="-72 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
+				</ui:if>
+				<ui:if test="ex :mout">
+					<ledchannel id="mout" min="-72 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="middle"/>
+				</ui:if>
 			</ledmeter>
 		</cell>
 		<cell rows="3">
 			<ledmeter vexpand="true" angle="1" bg.inherit="true">
-				<ledchannel id="rms_l" min="-12 db" max="12 db" log="true" balance="0 db" balance.visibility="true" type="peak" value.color="blue"/>
-				<ledchannel id="rms_r" min="-12 db" max="12 db" log="true" balance="0 db" balance.visibility="true" type="peak" value.color="blue"/>
+				<ui:if test="ex :rms_l">
+					<ledchannel id="rms_l" min="-12 db" max="12 db" log="true" balance="0 db" balance.visibility="true" type="peak" value.color="blue"/>
+					<ledchannel id="rms_r" min="-12 db" max="12 db" log="true" balance="0 db" balance.visibility="true" type="peak" value.color="blue"/>
+				</ui:if>
+				<ui:if test="ex :rms">
+					<ledchannel id="rms" min="-12 db" max="12 db" log="true" balance="0 db" balance.visibility="true" type="peak" value.color="blue"/>
+				</ui:if>
 			</ledmeter>
 		</cell>
 		<cell rows="3">

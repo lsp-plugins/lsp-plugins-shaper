@@ -51,8 +51,13 @@ namespace lsp
             static constexpr float  SHIFT_DFL           = 0.5f;
             static constexpr float  SHIFT_STEP          = 0.0005f;
 
-            static constexpr float  SCALE_MIN           = 0.25f;
-            static constexpr float  SCALE_MAX           = 1.75f;
+            static constexpr float  BIAS_MIN            = -48.0f;
+            static constexpr float  BIAS_MAX            = 48.0f;
+            static constexpr float  BIAS_DFL            = 0.0f;
+            static constexpr float  BIAS_STEP           = 0.05f;
+
+            static constexpr float  SCALE_MIN           = 0.1f;
+            static constexpr float  SCALE_MAX           = 1.5f;
             static constexpr float  SCALE_DFL           = 1.0f;
             static constexpr float  SCALE_STEP          = 0.0005f;
         } shaper;

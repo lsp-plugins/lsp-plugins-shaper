@@ -291,6 +291,8 @@ namespace lsp
             fWetGain        = 0.0f;
             fOldOutGain     = 0.0f;
             fOutGain        = 0.0f;
+            fOldBias        = GAIN_AMP_0_DB;
+            fBias           = 0.0f;
 
             pBypass         = NULL;
             pGainIn         = NULL;
@@ -302,6 +304,7 @@ namespace lsp
             pVShift         = NULL;
             pTopScale       = NULL;
             pBottomScale    = NULL;
+            pBias           = NULL;
             pOrder          = NULL;
             pOversampling   = NULL;
             pListen         = NULL;
@@ -420,6 +423,7 @@ namespace lsp
             pVShift             = TRACE_PORT(ports[port_id++]);
             pTopScale           = TRACE_PORT(ports[port_id++]);
             pBottomScale        = TRACE_PORT(ports[port_id++]);
+            pBias               = TRACE_PORT(ports[port_id++]);
             pOrder              = TRACE_PORT(ports[port_id++]);
             pOversampling       = TRACE_PORT(ports[port_id++]);
             pListen             = TRACE_PORT(ports[port_id++]);
@@ -465,6 +469,7 @@ namespace lsp
                     c->sBypass.destroy();
                     c->sOver.destroy();
                     c->sDryDelay.destroy();
+                    c->sRMSMeter.destroy();
                 }
                 vChannels   = NULL;
             }
@@ -503,6 +508,7 @@ namespace lsp
             fOutGain                = pGainOut->value();
             fDryGain                = pDry->value();
             fWetGain                = pWet->value();
+            fBias                   = dspu::db_to_gain(pBias->value());
             bListen                 = pListen->value() >= 0.5f;
 
             // Update channel settings
@@ -601,6 +607,8 @@ namespace lsp
                     c->sRMSMeter.process(vOvsBuffer, const_cast<const float **>(&vInBuffer), to_do);
                     float rms_in            = dsp::abs_max(vOvsBuffer, to_do);
 
+                    dsp::lramp1(vInBuffer, fOldBias, fBias, to_do);     // Apply bias shift
+
                     c->sOver.upsample(vOvsBuffer, vInBuffer, to_do);
 
                     if (bCrossfade)
@@ -627,11 +635,15 @@ namespace lsp
                     c->sDryDelay.process(vInBuffer, vInBuffer, to_do);
                     if (!bListen)
                     {
-                        dsp::lramp1(vBuffer, fOldWetGain, fWetGain, to_do);
+                        dsp::lramp1(vBuffer, fOldWetGain / fOldBias, fWetGain / fBias, to_do);
                         dsp::lramp_add2(vBuffer, vInBuffer, fOldDryGain, fDryGain, to_do);
                     }
                     else
+                    {
+                        dsp::lramp1(vBuffer, 1.0f / fOldBias, 1.0f / fBias, to_do);
                         dsp::sub2(vBuffer, vInBuffer, to_do);
+                        dsp::lramp1(vBuffer, fOldWetGain, fWetGain, to_do);
+                    }
                     c->pMeterOut->set_value(dsp::abs_max(vBuffer, to_do));
 
                     c->sRMSMeter.process(vOvsBuffer, const_cast<const float **>(&vBuffer), to_do);
@@ -650,6 +662,7 @@ namespace lsp
                 fOldDryGain             = fDryGain;
                 fOldWetGain             = fWetGain;
                 fOldOutGain             = fOutGain;
+                fOldBias                = fBias;
                 bCrossfade              = false;
 
                 // Update pointers

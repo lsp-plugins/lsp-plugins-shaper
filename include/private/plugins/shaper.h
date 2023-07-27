@@ -104,6 +104,8 @@ namespace lsp
                 float               fWetGain;           // Actual wet gain
                 float               fOldOutGain;        // Old output gain
                 float               fOutGain;           // Actual output gain
+                float               fOldBias;           // Old bias
+                float               fBias;              // New bias
 
                 plug::IPort        *pBypass;            // Bypass
                 plug::IPort        *pGainIn;            // Input gain
@@ -115,6 +117,7 @@ namespace lsp
                 plug::IPort        *pVShift;            // Vertical shift
                 plug::IPort        *pTopScale;          // Top scale
                 plug::IPort        *pBottomScale;       // Bottom scale
+                plug::IPort        *pBias;              // Bias
                 plug::IPort        *pOrder;             // Approximation order
                 plug::IPort        *pOversampling;      // Oversampling
                 plug::IPort        *pListen;            // Listen
