@@ -532,7 +532,7 @@ namespace lsp
             float v_shift           = pVShift->value();
             float t_scale           = pTopScale->value();
             float b_scale           = pBottomScale->value();
-            size_t order            = meta::shaper::ORDER_MIN + pOrder->value();
+            size_t order            = meta::shaper::ORDER_MIN + pOrder->value() + 1;
 
             if ((h_shift != fHShift) ||
                 (v_shift != fVShift) ||

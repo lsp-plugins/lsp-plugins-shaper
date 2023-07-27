@@ -34,9 +34,9 @@ namespace lsp
         typedef struct shaper
         {
             static constexpr size_t GRAPH_DOTS          = 256;
-            static constexpr size_t ORDER_MIN           = 4;
+            static constexpr size_t ORDER_MIN           = 3;
             static constexpr size_t ORDER_MAX           = 12;
-            static constexpr size_t ORDER_DFL           = 8 - ORDER_MIN;
+            static constexpr size_t ORDER_DFL           = 7 - ORDER_MIN;
             static constexpr size_t OVERSAMPLING_MAX    = 8;
 
             static constexpr float  RMS_REACTIVITY      = 40.0f;

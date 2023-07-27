@@ -56,6 +56,7 @@ namespace lsp
 
         static const port_item_t approximation_orders[] =
         {
+            { "3rd order",              "shaper.approximation.3rd_order"    },
             { "4th order",              "shaper.approximation.4th_order"    },
             { "5th order",              "shaper.approximation.5th_order"    },
             { "6th order",              "shaper.approximation.6th_order"    },
@@ -146,8 +147,8 @@ namespace lsp
         {
             "shaper",
             "Shaper plugin",
-            B_UTILITIES,
-            "", // TODO: provide ID of the video on YouTube
+            B_EFFECTS,
+            "This plugin performs some additional wave shaping of the audio signal",
             "" // TODO: write plugin description, should be the same to the english version in 'bundles.json'
         };
 
@@ -161,7 +162,7 @@ namespace lsp
             LSP_LV2_URI("shaper_mono"),
             LSP_LV2UI_URI("shaper_mono"),
             "shpm",
-            1,              // TODO: fill valid LADSPA identifier (positive decimal integer)
+            LSP_LADSPA_SHAPER_BASE + 0,
             LSP_LADSPA_URI("shaper_mono"),
             LSP_CLAP_URI("shaper_mono"),
             LSP_PLUGINS_SHAPER_VERSION,
@@ -185,7 +186,7 @@ namespace lsp
             LSP_LV2_URI("shaper_stereo"),
             LSP_LV2UI_URI("shaper_stereo"),
             "shps",
-            2,              // TODO: fill valid LADSPA identifier (positive decimal integer)
+            LSP_LADSPA_SHAPER_BASE + 1,
             LSP_LADSPA_URI("shaper_stereo"),
             LSP_CLAP_URI("shaper_stereo"),
             LSP_PLUGINS_SHAPER_VERSION,

@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=TODO: Template Plugin
-GenericName=TODO: Template Plugin
-Comment=TODO: add description what plugin does
+Name=Shaper Mono
+GenericName=Shaper
+Comment=This plugin performs some additional wave shaping of the mono signal
 Exec=lsp-plugins-shaper-mono
 Icon=lsp-plugins
 Terminal=false
